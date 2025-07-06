@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  password        String
+  birthDate       DateTime
+  birthTime       String
+  birthLocation   String
+  latitude        Float?
+  longitude       Float?
+  sunSign         String
+  moonSign        String
+  risingSign      String
+  venusSign       String?
+  marsSign        String?
+  lookingFor      String
+  bio             String?
+  profileImage    String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  sentMatches     Match[]  @relation("UserASentMatches")
+  receivedMatches Match[]  @relation("UserBReceivedMatches")
+
+  @@map("users")
+}
+
+model Match {
+  id                  String   @id @default(uuid())
+  userAId             String
+  userBId             String
+  compatibility       Float
+  sunCompatibility    Float?
+  moonCompatibility   Float?
+  risingCompatibility Float?
+  overallScore        Float
+  isLiked             Boolean  @default(false)
+  isMatched           Boolean  @default(false)
+  matchedAt           DateTime @default(now())
+  createdAt           DateTime @default(now())
+  userA               User     @relation("UserASentMatches", fields: [userAId], references: [id], onDelete: Cascade)
+  userB               User     @relation("UserBReceivedMatches", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@unique([userAId, userBId])
+  @@map("matches")
+}
