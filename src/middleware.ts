@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { extractTokenFromRequest, verifyToken, AuthError } from '@/lib/auth'
+import { extractTokenFromRequest, verifyToken } from '@/lib/auth'
 
 // Define API routes that need authentication
 const protectedApiRoutes = [
@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
       verifyToken(token)
       // Token is valid, continue
       return NextResponse.next()
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
